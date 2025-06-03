@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+  <head>
+  <title>StextFile</title>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/output.css') }}"/>
+    <link rel="icon" href="{{ url_for('static', filename='ico/favicon.ico') }}"/>
+  </head>
+  <body class="text-white bg-gray-900">
+    <div class="h-screen flex flex-col gap-5 mt-10 items-center">
+      <div class="h-auto w-full pl-5 flex gap-3 text-xl">
+        <label class="">Limite</label
+        ><label class="text-green-600">256MB</label>
+      </div>
+
+      <div
+        class="flex bg-white text-lg sm:w-[60%] w-[90%] rounded-lg h-15"
+      >
+        <button
+          id="st"
+          onclick="choose(this)"
+          class="flex-1 rounded-l-lg {% if active_tab == 'text' or not active_tab %}bg-green-500 text-white{% else %}text-black{% endif %}"
+        >
+          Compartir texto
+        </button>
+        <button
+          id="sf"
+          onclick="choose(this)"
+          class="flex-1 rounded-r-lg {% if active_tab == 'file' %}bg-green-500 text-white{% else %}text-black{% endif %}"
+        >
+          Compartir Archivo
+        </button>
+      </div>
+
+      <div
+        id="textSection"
+        class="{% if active_tab == 'file' %}hidden{% endif %} w-full flex flex-col items-center gap-5"
+      >
+        <textarea
+          spellcheck="false"
+          id="textTx"
+          placeholder="Introduce tu texto aqui..."
+          class="h-40 w-[70%] bg-gray-800 rounded-lg outline-none p-5 sm:w-[60%] w-[90%]"
+        ></textarea>
+        <button
+          onclick="uploadText()"
+          class="bg-green-600 hover:cursor-pointer hover:opacity-80 w-[90%] sm:w-[50%] p-4 text-xl rounded-lg"
+        >
+          Generar y Subir Archivo
+        </button>
+      </div>
+
+      <form
+        id="formx"
+        class="{% if active_tab != 'file' %}hidden{% endif %} w-[90%] sm:w-[50%] flex justify-center items-center flex-col gap-5"
+        method="POST"
+        action="/upload"
+        enctype="multipart/form-data"
+      >
+        <input type="file" name="archivo" class="hidden" id="archivo" />
+        <label for="archivo">
+          <img
+            class="hover:cursor-pointer"
+            src="https://static.vecteezy.com/system/resources/previews/023/527/362/non_2x/upload-icon-sign-symbol-green-design-transparent-background-free-png.png"
+            width="100"
+          />
+        </label>
+        <p>Presione la imagen para adjuntar el archivo</p>
+        <input
+          class="bg-green-600 hover:cursor-pointer hover:opacity-80 sm:w-[60%] w-full p-4 text-xl rounded-lg"
+          type="submit"
+          value="Subir Archivo"
+        />
+      </form>
+
+      {% if error %}
+      <div style="color: red">{{ error }}</div>
+      {% endif %} {% if success %}
+      <div class="text-center flex flex-col gap-5">
+        <p class="text-white">
+          ¡{% if active_tab == 'file' %}Archivo{% else %}Texto{% endif %} subido
+          con éxito!
+        </p>
+        <p class="text-green-600 font-bold">
+          <label class="text-white">URL:</label>
+          <a id="link" href="{{ file_url }}" target="_blank">{{ file_url }}</a>
+        </p>
+        <button
+          class="bg-green-600 p-2 rounded-lg hover:opacity-80 hover:cursor-pointer text-white"
+          onclick="copyLink()"
+        >
+          Copiar URL
+        </button>
+      </div>
+      {% endif %}
+    </div>
+    <script src="{{ url_for('static', filename='js/script.js') }}"></script>
+  </body>
+</html>
