@@ -7,7 +7,7 @@ app = Flask(__name__)
 
 def acortar_url(link):
  try:
-  response = requests.post('https://acut0x.onrender.com/',data={'url': link},headers={'Content-Type': 'application/x-www-form-urlencoded'})
+  response = requests.post('https://acut0x-qa7e.onrender.com',data={'url': link},headers={'Content-Type': 'application/x-www-form-urlencoded'})
   response.raise_for_status()
   soup = BeautifulSoup(response.text, 'html.parser')
   enlace_acortado = soup.find('a', class_='acortada')['href']
