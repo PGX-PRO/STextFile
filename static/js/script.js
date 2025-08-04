@@ -20,7 +20,7 @@ function copyLink() {
  if (hostname === "localhost" || hostname === "127.0.0.1") {
   x = "http";
  } else {
-  x = "https:";
+  x = "https";
  }
  const linkGo = `${x}://${mainLink.split("/").slice(0, -1).slice(-1)[0]}`;
  window.location.href = linkGo;
