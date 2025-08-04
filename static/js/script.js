@@ -95,7 +95,7 @@ async function uploadText() {
 
 function uploadFile(event) {
  event.preventDefault();
- uploadingF.value = "Uploading File...";
+ uploadingF.textContent = "Uploading File...";
  setTimeout(() => {
   event.target.form.submit();
  }, 100);
