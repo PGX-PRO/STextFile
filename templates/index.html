@@ -10,8 +10,8 @@
   />
   <link rel="icon" href="{{ url_for('static', filename='ico/favicon.ico') }}" />
  </head>
- <body class="text-white bg-gray-900 overflow-hidden">
-  <div class="h-[100dvh] flex flex-col gap-5 mt-10 items-center">
+ <body class="h-screen text-white bg-gray-900">
+  <div class="h-auto flex flex-col gap-5 pt-2 items-center">
    <div class="h-auto w-full pl-5 flex gap-3 text-xl">
     <label class="">Limit = </label><label class="text-green-600">256MB</label>
    </div>
@@ -83,7 +83,7 @@
    {% if error %}
    <div style="color: red">{{ error }}</div>
    {% endif %} {% if success %}
-   <div id="showNotification" class="text-center flex flex-col gap-5">
+   <div id="showNotification" class="text-center flex flex-col gap-5 pb-5">
     <p class="text-white">
      {% if active_tab == 'file' %}File{% else %}File{% endif %} uploaded
      successfully
