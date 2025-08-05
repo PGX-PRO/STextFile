@@ -6,7 +6,7 @@ const input = document.getElementById("textTx");
 sf.classList.add("hover:cursor-pointer");
 
 function copyLink() {
- const link = document.getElementById("link").href;
+ const link = document.getElementById("link").href.replaceAll("https://", "");
  const input = document.createElement("input");
  input.value = link;
  document.body.appendChild(input);
@@ -31,7 +31,6 @@ function choose(selectedBtn) {
  if (notification) {
   notification.style.display = "none";
  }
-
  const textSection = document.getElementById("textSection");
  const formx = document.getElementById("formx");
  st.classList.remove("bg-green-500", "text-white");
@@ -40,7 +39,6 @@ function choose(selectedBtn) {
  sf.classList.add("text-black");
  selectedBtn.classList.add("bg-green-500", "text-white");
  selectedBtn.classList.remove("text-black");
-
  if (selectedBtn.id === "st") {
   textSection.classList.remove("hidden");
   formx.classList.add("hidden");
@@ -61,35 +59,44 @@ async function uploadText() {
   alert("Por favor ingresa algún texto");
   return;
  }
-
- const blob = new Blob(["\ufeff" + text], { type: "text/plain;charset=UTF-8" });
+ const encoder = new TextEncoder();
+ const bytes = encoder.encode(text);
+ const blob = new Blob([bytes], { type: "application/octet-stream" });
  const file = new File([blob], "texto.txt", {
-  type: "text/plain;charset=UTF-8",
+  type: "application/octet-stream",
  });
  const formData = new FormData();
  formData.append("archivo", file);
  formData.append("expiry", "30");
 
- try {
-  const response = await fetch("/upload_text", {
+ const subir = async (datos) => {
+  const res = await fetch("/upload_text", {
    method: "POST",
-   body: formData,
+   body: datos,
   });
 
-  if (response.ok) {
-   const result = await response.json();
-   if (result.success) {
-    window.location.href = `/?success=true&file_url=${encodeURIComponent(
-     result.files[0].url,
-    )}&active_tab=text`;
-   } else {
-    alert("Error al subir el archivo de texto");
-   }
-  } else {
-   alert("Error en la conexión");
+  if (!res.ok) throw new Error("conexión fallida");
+  const result = await res.json();
+  if (!result.success) throw new Error("error en servidor");
+  const encoded = encodeURIComponent(encodeURIComponent(result.files[0].url));
+  window.location.href = `/?success=true&file_url=${encoded}&active_tab=text`;
+ };
+ try {
+  await subir(formData);
+ } catch {
+  const base64 = btoa(unescape(encodeURIComponent(text)));
+  const blob64 = new Blob([base64], { type: "text/plain" });
+  const file64 = new File([blob64], "texto_base64.txt", {
+   type: "text/plain",
+  });
+  const formData64 = new FormData();
+  formData64.append("archivo", file64);
+  formData64.append("expiry", "30");
+  try {
+   await subir(formData64);
+  } catch (e) {
+   alert("Error final: " + e.message);
   }
- } catch (error) {
-  alert("Error: " + error.message);
  }
 }
 

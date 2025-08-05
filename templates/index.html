@@ -15,7 +15,6 @@
    <div class="h-auto w-full pl-5 flex gap-3 text-xl">
     <label class="">Limit = </label><label class="text-green-600">256MB</label>
    </div>
-
    <div
     class="flex bg-white text-lg sm:w-[60%] sm:h-12 w-[90%] rounded-lg h-15"
    >
@@ -34,7 +33,6 @@
      Share File
     </button>
    </div>
-
    <div
     id="textSection"
     class="{% if active_tab == 'file' %}hidden{% endif %} w-full flex flex-col items-center gap-5"
@@ -53,7 +51,6 @@
      Generate File And Upload
     </button>
    </div>
-
    <form
     id="formx"
     class="{% if active_tab != 'file' %}hidden{% endif %} w-[90%] sm:w-[50%] flex justify-center items-center flex-col gap-5"
@@ -79,7 +76,6 @@
      Upload File
     </button>
    </form>
-
    {% if error %}
    <div style="color: red">{{ error }}</div>
    {% endif %} {% if success %}
@@ -90,7 +86,9 @@
     </p>
     <p class="text-green-600 font-bold">
      <label class="text-white">URL:</label>
-     <a id="link" href="{{ file_url }}" target="_blank">{{ file_url }}</a>
+     <a id="link" href="{{ file_url }}" target="_blank"
+      >{{ file_url.replace("https://", "") }}</a
+     >
     </p>
     <button
      class="bg-green-600 p-2 rounded-lg hover:opacity-80 hover:cursor-pointer text-white"
