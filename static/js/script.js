@@ -59,12 +59,15 @@ async function uploadText() {
   alert("Por favor ingresa algún texto");
   return;
  }
+
+ const bom = new Uint8Array([0xef, 0xbb, 0xbf]);
  const encoder = new TextEncoder();
- const bytes = encoder.encode(text);
- const blob = new Blob([bytes], { type: "application/octet-stream" });
- const file = new File([blob], "texto.txt", {
-  type: "application/octet-stream",
+ const encodedText = encoder.encode(text);
+ const fullContent = new Blob([bom, encodedText], { type: "text/plain" });
+ const file = new File([fullContent], "texto.txt", {
+  type: "text/plain",
  });
+
  const formData = new FormData();
  formData.append("archivo", file);
  formData.append("expiry", "30");
@@ -81,11 +84,12 @@ async function uploadText() {
   const encoded = encodeURIComponent(encodeURIComponent(result.files[0].url));
   window.location.href = `/?success=true&file_url=${encoded}&active_tab=text`;
  };
+
  try {
   await subir(formData);
  } catch {
-  const base64 = btoa(unescape(encodeURIComponent(text)));
-  const blob64 = new Blob([base64], { type: "text/plain" });
+  const base64 = btoa(String.fromCharCode(...encodedText));
+  const blob64 = new Blob([base64], { type: "text/plain;charset=utf-8" });
   const file64 = new File([blob64], "texto_base64.txt", {
    type: "text/plain",
   });

@@ -27,10 +27,10 @@ def upload(file_storage):
   "User-Agent": "Mozilla/5.0 (Linux; Android 6.0; Nexus 5 Build/MRA58N) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/136.0.0.0 Mobile Safari/537.36",
   "Referer": "https://qu.ax/"
  }
- file_data = BytesIO()
- file_storage.save(file_data)
+ bom = b'\xef\xbb\xbf'
+ file_data = BytesIO(bom + file_storage.read())
  file_data.seek(0)
- files = {'files[]': (file_storage.filename, file_data, 'text/plain')}
+ files = {'files[]': (file_storage.filename, file_data, 'application/octet-stream')}
  data = {'expiry': '30'}
  r = requests.post(url, files=files, data=data, headers=headers)
  return r.json()
