@@ -47,6 +47,7 @@ def index():
 @app.route('/upload', methods=['POST'])
 def upload_file():
  import base64
+ from werkzeug.datastructures import FileStorage
 
  if 'archivo' not in request.files:
   return render_template('index.html', error='No se seleccionó ningún archivo', active_tab='file')
@@ -61,31 +62,30 @@ def upload_file():
   return render_template('index.html', success=True, file_url=final, active_tab='file')
 
  try:
-  print("El archivo original falló, reintentando subida con el archivo codificado a base64 y con cambio de nombre")
-
   file.stream.seek(0)
   file_bytes = file.stream.read()
   base64_bytes = base64.b64encode(file_bytes)
-
   base64_stream = BytesIO(base64_bytes)
   base64_stream.seek(0)
 
-  from werkzeug.datastructures import FileStorage
-  base64_file = FileStorage(stream=base64_stream, filename="archivo_base64.txt", content_type="text/plain")
+  content_type = file.content_type or 'application/octet-stream'
+  filename = "archivo_base64.txt" if content_type.startswith('text/') else file.filename + ".b64"
+
+  base64_file = FileStorage(stream=base64_stream, filename=filename, content_type=content_type)
 
   result2 = upload(base64_file)
-  print("Respuesta del segundo intento (base64):", result2)
 
   if result2.get('success'):
    url = result2['files'][0]['url']
-   url = f"https://decode-jfw1.onrender.com/base64/?link={url}"
+   if content_type.startswith('text/'):
+    url = f"https://decode-jfw1.onrender.com/base64/?link={url}"
    final = acortar_url(url)
    return render_template('index.html', success=True, file_url=final, active_tab='file')
   else:
-   return render_template('index.html', error='Error al subir el archivo en base64', active_tab='file')
+   return render_template('index.html', error='Error al subir el archivo', active_tab='file')
  except Exception as e:
-  print("Error al procesar archivo como base64:", e)
-  return render_template('index.html', error='Error al procesar archivo como base64', active_tab='file')
+  print("Error al procesar archivo:", e)
+  return render_template('index.html', error='Error al procesar archivo', active_tab='file')
 
 @app.route('/upload_text', methods=['POST'])
 def upload_text_file():
